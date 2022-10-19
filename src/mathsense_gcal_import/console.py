@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from . import __version__
+from .gcal import setup
 
 URL_UNF = 'http://mathsense.com/myapps/studentlog/instructor/myday?{}&instructorid=[NAL]-Nicholas&zoomid=Needham-Conexed&pagepop=1'
 
@@ -30,3 +31,5 @@ def main():
         time_element_list = soup.find_all('td', string=re.compile('.*PM'))
         for element in time_element_list:
             print(element.string)
+
+    setup()
