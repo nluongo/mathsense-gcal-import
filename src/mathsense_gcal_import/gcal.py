@@ -1,5 +1,6 @@
-import datetime
+from datetime import datetime, date, timedelta
 import os.path
+import pickle
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -7,12 +8,28 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from .config import calendar_id
+
 SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+time_zone = 'America/New_York'
+event_skeleton = {
+    'summary': 'Tutoring',
+    'description': 'mathsense.com/tablet',
+    'start' : {
+        'dateTime' : datetime.now(),
+        'timeZone' : time_zone,
+    },
+    'end' : {
+        'dateTime' : datetime.now(),
+        'timeZone' : time_zone,
+    },
+}
+format = '%I:%M %p'
 
 def setup():
     """Initializes connections with Google Calendar API"""
     
-    print(os.getcwd())
     # Google Calendar setup taken wholesale from quickstart.py
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is created automatically when the authorization flow completes for the first time
@@ -31,9 +48,24 @@ def setup():
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
     try:
-        service = build('calendar', 'v3', credentials=cred)
+        service = build('calendar', 'v3', credentials=creds)
         print(service)
         print('Did it')
         return service
     except HttpError as error:
         print(f'An error occurred: {error}')
+
+def create_event(service, start_time):
+    """ Creates a gcal event with the given start time """
+
+    start_time = datetime.strptime(start_time, format)
+    start_time = datetime.combine(date.today(), start_time.time())
+    time_delta = timedelta(minutes=30)
+    end_time = start_time + time_delta
+
+    event = event_skeleton
+    event['start']['dateTime'] = start_time.isoformat()
+    event['end']['dateTime'] = end_time.isoformat()
+
+    event = service.events().insert(calendarId=calendar_id, body=event).execute()
+    print('Event created')
