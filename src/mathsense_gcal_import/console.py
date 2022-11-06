@@ -15,10 +15,10 @@ from .config import url_unf
 def main():
     """The mathsense gcal project"""
     click.echo("Hello, world!")
-        
+
     todays_date = date.today()
     url = url_unf.format(todays_date)
-    print(url)
+    click.echo(url)
     
     # Scrape mathsense.com for todays sessions
     with requests.get(url, headers={"User-Agent": "XY"}) as response:
@@ -34,7 +34,10 @@ def main():
         service = setup()
     
         for start_time in start_times:
-            create_event(service, start_time)            
+            create_event(service, start_time)
+            click.echo(start_time)
 
     else:
-        print('No sessions found!')
+        click.echo('No sessions found')
+
+
