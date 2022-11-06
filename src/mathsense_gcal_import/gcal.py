@@ -49,8 +49,6 @@ def setup():
             pickle.dump(creds, token)
     try:
         service = build('calendar', 'v3', credentials=creds)
-        print(service)
-        print('Did it')
         return service
     except HttpError as error:
         print(f'An error occurred: {error}')

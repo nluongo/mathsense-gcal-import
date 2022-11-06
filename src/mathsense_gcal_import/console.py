@@ -18,7 +18,6 @@ def main():
         
     todays_date = date.today()
     url = url_unf.format(todays_date)
-    print(todays_date)
     print(url)
     
     # Scrape mathsense.com for todays sessions
@@ -26,9 +25,6 @@ def main():
         response.raise_for_status()
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
-        print(soup)
-        print(soup.title)
-        print(len(soup.find_all('td', string=re.compile('.*PM'))))
         # Search for td objects with text ending in AM/PM
         time_element_list = soup.find_all('td', string=re.compile('.*[AP]M'))
         start_times = [element.string for element in time_element_list]
