@@ -53,8 +53,13 @@ def setup():
     except HttpError as error:
         print(f'An error occurred: {error}')
 
-def create_event(service, start_time):
-    """ Creates a gcal event with the given start time """
+def build_event(start_time: str):
+    """ 
+    Creates an event object in gcal required format with the given start time
+
+    :param str start_time: The start time of the session eg "10:30 AM"
+    :return dict: Event info dictionary
+    """
 
     start_time = datetime.strptime(start_time, format)
     start_time = datetime.combine(date.today(), start_time.time())
@@ -64,6 +69,16 @@ def create_event(service, start_time):
     event = event_skeleton
     event['start']['dateTime'] = start_time.isoformat()
     event['end']['dateTime'] = end_time.isoformat()
+
+    return event
+
+def send_event_to_calendar(service, event):
+    """
+    Send event object to gcal to be created
+
+    :param service: gcal service object
+    :param event: Event info dictionary
+    """
 
     event = service.events().insert(calendarId=calendar_id, body=event).execute()
     print('Event created')

@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from . import __version__
-from .gcal import setup, create_event
+from .gcal import setup, build_event, send_event_to_calendar
 from .config import url_unf
 
 
@@ -34,7 +34,8 @@ def main():
         service = setup()
     
         for start_time in start_times:
-            create_event(service, start_time)
+            event = build_events(start_time)
+            send_event_to_calendar(service, event)
             click.echo(start_time)
 
     else:
